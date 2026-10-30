@@ -1,6 +1,6 @@
 # Синтаксический анализатор тестовых векторов
 
-Программа на C++ для чтения файлов Intel HEX и извлечения входных и выходных тестовых векторов. Анализатор проверяет записи HEX, разбирает заголовок тестового вектора и выводит сведения о загруженных данных. Формат хранения описан в [hex_storage_format.md](hex_storage_format.md).
+Программа на C++ для чтения файлов Intel HEX и извлечения входных и выходных тестовых векторов. Анализатор проверяет записи HEX, разбирает заголовок тестового вектора и выводит сведения о загруженных данных.
 
 ## Repository structure
 
@@ -52,11 +52,8 @@ syntax_analyzer_of_test_vectors/
 |-- .clang-format
 |-- .gitignore
 |-- automatic_test_runner.sh
-|-- CHANGELO.asciidoc
-|-- hex_storage_format.md
 |-- Makefile
 |-- README.md
-`-- repo_audit_findings.adoc
 ```
 
 В `include/` находятся интерфейсы и структуры данных, в `src/` их реализации. Каталог `tools/` содержит генератор векторов, тест и скрипт-форматирования. В `test_vectors/` приведены тестовые HEX-файлы; в дереве показана только часть набора.
@@ -65,7 +62,7 @@ syntax_analyzer_of_test_vectors/
 
 ## Setup
 
-Команды выполняются из корня репозитория. Перед запуском тестовых скриптов соберите программу:
+Команды выполняются из корня репозитория. Перед запуском тестовых скриптов используйте:
 
 ```shell
 make
@@ -96,8 +93,6 @@ python3 tools/gen_test_vector.py --count 4 --seed 42 --out test_vectors/my_vec.h
 3. **Доступ к данным.** `HexLoader` наследует `intelhex` и предоставляет загрузку файла, чтение байтов, блоков и чисел с порядком байтов little-endian или big-endian. Интерфейс находится в [include/hex_loader.h](include/hex_loader.h), реализация в [src/hex_loader.cpp](src/hex_loader.cpp). Отсутствующие байты при чтении по умолчанию заменяются на `0xFF`.
 4. **Разбор тестовых векторов.** `TestVectorLoader` читает заголовок с адреса `0x0C000000`, проверяет сигнатуру, идентификатор модуля, размеры и описание сигналов. Поля заголовка читаются в big-endian. По размерам данных вычисляется число векторов, затем из входной и выходной областей читаются пары блоков в `TestVector`. См. [include/TestVectorLoader.hpp](include/TestVectorLoader.hpp), [src/TestVectorLoader.cpp](src/TestVectorLoader.cpp) и [include/Definitions.hpp](include/Definitions.hpp).
 5. **Диагностика.** [HexParserLogger](src/hex_parser_logger.cpp) собирает ошибки и предупреждения низкоуровневого парсера. [HexDumper](src/HexDumper.cpp) выводит статистику и помогает анализировать адреса, разрывы и содержимое данных.
-
-Подробное описание полей и расположения данных приведено в [документе о формате хранения](hex_storage_format.md). Известные проблемы перечислены в [repo_audit_findings.adoc](repo_audit_findings.adoc).
 
 ## Requirements
 
